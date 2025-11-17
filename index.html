@@ -88,6 +88,12 @@
             min-width: 150px;
         }
 
+        .dynamic-inputs {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #3c3c3c;
+        }
+
         label {
             display: block;
             margin-bottom: 5px;
@@ -121,6 +127,7 @@
             cursor: pointer;
             transition: background 0.3s;
             font-family: 'Courier New', monospace;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -172,6 +179,7 @@
             border-radius: 4px;
             border-left: 3px solid #ce9178;
             display: none;
+            z-index: 1000;
         }
 
         #status.show {
@@ -196,8 +204,8 @@
             <div class="input-group">
                 <div class="input-row">
                     <div class="input-field">
-                        <label>K (классов):</label>
-                        <input type="number" id="K1" value="3">
+                        <label>K (количество классов):</label>
+                        <input type="number" id="K1" value="3" min="1" max="10" onchange="generateInputs1()">
                     </div>
                     <div class="input-field">
                         <label>V (ресурс):</label>
@@ -205,35 +213,7 @@
                     </div>
                 </div>
 
-                <div class="input-row">
-                    <div class="input-field">
-                        <label>b₁:</label>
-                        <input type="number" id="b1_1" value="1">
-                    </div>
-                    <div class="input-field">
-                        <label>b₂:</label>
-                        <input type="number" id="b2_1" value="2">
-                    </div>
-                    <div class="input-field">
-                        <label>b₃:</label>
-                        <input type="number" id="b3_1" value="3">
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <div class="input-field">
-                        <label>ρ₁:</label>
-                        <input type="number" id="rho1_1" value="3">
-                    </div>
-                    <div class="input-field">
-                        <label>ρ₂:</label>
-                        <input type="number" id="rho2_1" value="2">
-                    </div>
-                    <div class="input-field">
-                        <label>ρ₃:</label>
-                        <input type="number" id="rho3_1" value="2">
-                    </div>
-                </div>
+                <div id="dynamicInputs1" class="dynamic-inputs"></div>
 
                 <button id="calcBtn1" onclick="runTask1()">Рассчитать</button>
             </div>
@@ -256,8 +236,8 @@
                         <input type="number" id="N2" value="5">
                     </div>
                     <div class="input-field">
-                        <label>K (классов):</label>
-                        <input type="number" id="K2" value="2">
+                        <label>K (количество классов):</label>
+                        <input type="number" id="K2" value="2" min="1" max="10" onchange="generateInputs2()">
                     </div>
                     <div class="input-field">
                         <label>V (ресурс):</label>
@@ -265,40 +245,9 @@
                     </div>
                 </div>
 
-                <div class="input-row">
-                    <div class="input-field">
-                        <label>ξ₁ (xi1):</label>
-                        <input type="number" step="0.1" id="xi1_2" value="0.6">
-                    </div>
-                    <div class="input-field">
-                        <label>ξ₂ (xi2):</label>
-                        <input type="number" step="0.1" id="xi2_2" value="0.2">
-                    </div>
-                </div>
+                <div id="dynamicInputs2" class="dynamic-inputs"></div>
 
-                <div class="input-row">
-                    <div class="input-field">
-                        <label>b₁:</label>
-                        <input type="number" id="b1_2" value="1">
-                    </div>
-                    <div class="input-field">
-                        <label>b₂:</label>
-                        <input type="number" id="b2_2" value="2">
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <div class="input-field">
-                        <label>μ₁ (mu1):</label>
-                        <input type="number" step="0.1" id="mu1_2" value="1">
-                    </div>
-                    <div class="input-field">
-                        <label>μ₂ (mu2):</label>
-                        <input type="number" step="0.1" id="mu2_2" value="1">
-                    </div>
-                </div>
-
-                <div class="input-row">
+                <div class="input-row" style="margin-top: 15px;">
                     <div class="input-field">
                         <label>Список v для q'(v) (через запятую):</label>
                         <input type="text" id="v_list_2" value="1,2" placeholder="1,2,3">
@@ -353,6 +302,86 @@
             document.getElementById('task' + tabNum).classList.add('active');
         }
 
+        // Генерация полей для Задания 1
+        function generateInputs1() {
+            const K = parseInt(document.getElementById('K1').value);
+            const container = document.getElementById('dynamicInputs1');
+
+            let html = '<h3 style="color: #9cdcfe; margin-bottom: 10px;">Параметры классов:</h3>';
+
+            // b_k
+            html += '<div class="input-row">';
+            for (let k = 1; k <= K; k++) {
+                html += `
+                    <div class="input-field">
+                        <label>b${k}:</label>
+                        <input type="number" id="b${k}_1" value="${k}" step="0.1">
+                    </div>
+                `;
+            }
+            html += '</div>';
+
+            // rho_k
+            html += '<div class="input-row">';
+            for (let k = 1; k <= K; k++) {
+                html += `
+                    <div class="input-field">
+                        <label>ρ${k}:</label>
+                        <input type="number" id="rho${k}_1" value="${k}" step="0.1">
+                    </div>
+                `;
+            }
+            html += '</div>';
+
+            container.innerHTML = html;
+        }
+
+        // Генерация полей для Задания 2
+        function generateInputs2() {
+            const K = parseInt(document.getElementById('K2').value);
+            const container = document.getElementById('dynamicInputs2');
+
+            let html = '<h3 style="color: #9cdcfe; margin-bottom: 10px;">Параметры классов:</h3>';
+
+            // xi_k
+            html += '<div class="input-row">';
+            for (let k = 1; k <= K; k++) {
+                html += `
+                    <div class="input-field">
+                        <label>ξ${k} (xi${k}):</label>
+                        <input type="number" id="xi${k}_2" value="${k * 0.2}" step="0.1">
+                    </div>
+                `;
+            }
+            html += '</div>';
+
+            // b_k
+            html += '<div class="input-row">';
+            for (let k = 1; k <= K; k++) {
+                html += `
+                    <div class="input-field">
+                        <label>b${k}:</label>
+                        <input type="number" id="b${k}_2" value="${k}">
+                    </div>
+                `;
+            }
+            html += '</div>';
+
+            // mu_k
+            html += '<div class="input-row">';
+            for (let k = 1; k <= K; k++) {
+                html += `
+                    <div class="input-field">
+                        <label>μ${k} (mu${k}):</label>
+                        <input type="number" id="mu${k}_2" value="1" step="0.1">
+                    </div>
+                `;
+            }
+            html += '</div>';
+
+            container.innerHTML = html;
+        }
+
         async function runTask1() {
             if (!pyodideLoaded) {
                 const loaded = await initPyodide();
@@ -368,22 +397,28 @@
             output.textContent = 'Выполняется расчёт...';
 
             try {
-                const K = document.getElementById('K1').value;
-                const V = document.getElementById('V1').value;
-                const b1 = document.getElementById('b1_1').value;
-                const b2 = document.getElementById('b2_1').value;
-                const b3 = document.getElementById('b3_1').value;
-                const rho1 = document.getElementById('rho1_1').value;
-                const rho2 = document.getElementById('rho2_1').value;
-                const rho3 = document.getElementById('rho3_1').value;
+                const K = parseInt(document.getElementById('K1').value);
+                const V = parseInt(document.getElementById('V1').value);
+
+                // Собираем b[]
+                let b_values = [];
+                for (let k = 1; k <= K; k++) {
+                    b_values.push(document.getElementById(`b${k}_1`).value);
+                }
+
+                // Собираем rho[]
+                let rho_values = [];
+                for (let k = 1; k <= K; k++) {
+                    rho_values.push(document.getElementById(`rho${k}_1`).value);
+                }
 
                 const pythonCode = `
 from fractions import Fraction
 
-b = [${b1}, ${b2}, ${b3}]
+b = [${b_values.join(', ')}]
 V = ${V}
 K = ${K}
-ro = [${rho1}, ${rho2}, ${rho3}]
+ro = [${rho_values.join(', ')}]
 
 output = []
 
@@ -391,158 +426,94 @@ output.append("="*60)
 output.append("ЗАДАНИЕ 1: Множества S, Sk, S̄k")
 output.append("="*60)
 
-# S - все допустимые состояния
-S = []
-for n3 in range(V // b[2] + 1):
-    for n2 in range((V - b[2] * n3) // b[1] + 1):
-        for n1 in range(V - b[2] * n3 - b[1] * n2 + 1):
-            if b[0] * n1 + b[1] * n2 + b[2] * n3 <= V:
-                S.append((n1, n2, n3))
+# Генерация S для произвольного K
+def generate_S(K, V, b):
+    S = []
 
-output.append(f"\\nS (n1 + 2*n2 + 3*n3 ≤ {V}): {len(S)} состояний")
+    def recurse(index, state, used):
+        if index == K:
+            if used <= V:
+                S.append(tuple(state))
+            return
+
+        max_n = (V - used) // b[index] if b[index] > 0 else 0
+        for n in range(max_n + 1):
+            recurse(index + 1, state + [n], used + n * b[index])
+
+    recurse(0, [], 0)
+    return S
+
+S = generate_S(K, V, b)
+
+output.append(f"\\nS: {len(S)} состояний")
 for state in S:
     output.append(str(state))
 
-# Sk
-S1 = [state for state in S if sum(state[i] * b[i] for i in range(3)) + b[0] <= V]
-S2 = [state for state in S if sum(state[i] * b[i] for i in range(3)) + b[1] <= V]
-S3 = [state for state in S if sum(state[i] * b[i] for i in range(3)) + b[2] <= V]
-
-output.append(f"\\nS1 (n1 + 2*n2 + 3*n3 + {b[0]} ≤ {V}): {len(S1)} состояний")
-for state in S1:
-    output.append(str(state))
-
-output.append(f"\\nS2 (n1 + 2*n2 + 3*n3 + {b[1]} ≤ {V}): {len(S2)} состояний")
-for state in S2:
-    output.append(str(state))
-
-output.append(f"\\nS3 (n1 + 2*n2 + 3*n3 + {b[2]} ≤ {V}): {len(S3)} состояний")
-for state in S3:
-    output.append(str(state))
+# Sk для каждого класса
+S_k_list = []
+for k in range(K):
+    S_k = [state for state in S if sum(state[i] * b[i] for i in range(K)) + b[k] <= V]
+    S_k_list.append(S_k)
+    output.append(f"\\nS{k+1}: {len(S_k)} состояний")
+    for state in S_k:
+        output.append(str(state))
 
 # S̄k
-S_not1 = [state for state in S if state not in S1]
-S_not2 = [state for state in S if state not in S2]
-S_not3 = [state for state in S if state not in S3]
-
-output.append(f"\\nS_not1 (блокировка класса 1): {len(S_not1)} состояний")
-for state in S_not1:
-    output.append(str(state))
-
-output.append(f"\\nS_not2 (блокировка класса 2): {len(S_not2)} состояний")
-for state in S_not2:
-    output.append(str(state))
-
-output.append(f"\\nS_not3 (блокировка класса 3): {len(S_not3)} состояний")
-for state in S_not3:
-    output.append(str(state))
+for k in range(K):
+    S_not_k = [state for state in S if state not in S_k_list[k]]
+    output.append(f"\\nS_not{k+1}: {len(S_not_k)} состояний")
+    for state in S_not_k:
+        output.append(str(state))
 
 output.append("\\n" + "="*60)
 output.append("ЗАДАНИЕ 2: Вычисление q(v) и G")
 output.append("="*60)
 
-# Вычисляем q'(v)
 q_prime = [Fraction(0)] * (V + 1)
 q_prime[0] = Fraction(1)
 
-output.append("\\nВычисление q'(v) по рекуррентной формуле:")
-output.append("v·q'(v) = 3·q'(v-1) + 4·q'(v-2) + 6·q'(v-3)\\n")
+output.append("\\nq'(0) = 1\\n")
 
 for v in range(1, V + 1):
-    terms = []
-    values = []
+    summ = Fraction(0)
 
-    if v >= 1:
-        terms.append(f"3·q'({v-1})")
-        values.append(3 * q_prime[v-1])
-    if v >= 2:
-        terms.append(f"4·q'({v-2})")
-        values.append(4 * q_prime[v-2])
-    if v >= 3:
-        terms.append(f"6·q'({v-3})")
-        values.append(6 * q_prime[v-3])
+    for k in range(K):
+        if v >= b[k]:
+            summ += b[k] * ro[k] * q_prime[v - b[k]]
 
-    summ = sum(values)
     q_prime[v] = summ / v
-
-    # Подставляем значения
-    terms_with_values = []
-    if v >= 1:
-        terms_with_values.append(f"3·{q_prime[v-1]}")
-    if v >= 2:
-        terms_with_values.append(f"4·{q_prime[v-2]}")
-    if v >= 3:
-        terms_with_values.append(f"6·{q_prime[v-3]}")
-
-    output.append(f"q'({v}) = ({' + '.join(terms)}) / {v}")
-    output.append(f"     = ({' + '.join(terms_with_values)}) / {v}")
-    output.append(f"     = {summ} / {v}")
-    output.append(f"     = {q_prime[v]}\\n")
-
-# Вычисляем G
-output.append("Вычисление нормировочной константы G:")
-G_terms = [f"q'({v})" for v in range(V + 1)]
-G_values = [str(q_prime[v]) for v in range(V + 1)]
-
-output.append(f"G = {' + '.join(G_terms)}")
-output.append(f"  = {' + '.join(G_values)}")
+    output.append(f"q'({v}) = {q_prime[v]}")
 
 G = sum(q_prime)
-output.append(f"  = {G}")
-output.append(f"  ≈ {float(G):.6f}\\n")
+output.append(f"\\nG = {G} ≈ {float(G):.6f}")
 
-# Нормируем q(v)
 q = [q_prime[v] / G for v in range(V + 1)]
 
-output.append("Нормированные вероятности q(v) = q'(v)/G:")
+output.append("\\nq(v):")
 for v in range(V + 1):
-    output.append(f"q({v}) = {q_prime[v]} / {G} = {q[v]} ≈ {float(q[v]):.6f}")
+    output.append(f"q({v}) = {q[v]} ≈ {float(q[v]):.6f}")
 
 output.append("\\n" + "="*60)
 output.append("ЗАДАНИЕ 3: πk и UTIL")
 output.append("="*60)
 
-# πk
-output.append("\\nВероятности блокировки πk:")
-
 pi = []
 for k in range(K):
     V_bar = V - b[k] + 1
-    range_str = "".join([f"q({v})" + (" + " if v < V else "") for v in range(V_bar, V + 1)])
-    values_str = "".join([f"{q[v]}" + (" + " if v < V else "") for v in range(V_bar, V + 1)])
-
     pi_k = sum(q[v] for v in range(V_bar, V + 1))
     pi.append(pi_k)
+    output.append(f"π{k+1} = {pi_k} ≈ {float(pi_k):.6f}")
 
-    output.append(f"\\nπ{k+1} = Σ q(v) для v={V_bar}..{V}")
-    output.append(f"    = {range_str}")
-    output.append(f"    = {values_str}")
-    output.append(f"    = {pi_k}")
-    output.append(f"    ≈ {float(pi_k):.6f}")
-
-# UTIL
-output.append("\\n\\nКоэффициент использования UTIL:")
-output.append(f"UTIL = Σ v·q(v) для v=1..{V}")
-
-util_terms = [f"{v}·q({v})" for v in range(1, V + 1)]
-util_values = [f"{v}·{q[v]}" for v in range(1, V + 1)]
-util_products = [v * q[v] for v in range(1, V + 1)]
-
-output.append(f"     = {' + '.join(util_terms)}")
-output.append(f"     = {' + '.join(util_values)}")
-output.append(f"     = {' + '.join([str(p) for p in util_products])}")
-
-UTIL = sum(util_products)
-output.append(f"     = {UTIL}")
-output.append(f"     ≈ {float(UTIL):.6f}")
+UTIL = sum(v * q[v] for v in range(1, V + 1))
+output.append(f"\\nUTIL = {UTIL} ≈ {float(UTIL):.6f}")
 
 output.append("\\n" + "="*60)
 output.append("ИТОГОВЫЕ РЕЗУЛЬТАТЫ")
 output.append("="*60)
-output.append(f"G = {G} ≈ {float(G):.6f}")
+output.append(f"G = {G}")
 for k in range(K):
-    output.append(f"π{k+1} = {pi[k]} ≈ {float(pi[k]):.6f}")
-output.append(f"UTIL = {UTIL} ≈ {float(UTIL):.6f}")
+    output.append(f"π{k+1} = {pi[k]}")
+output.append(f"UTIL = {UTIL}")
 
 "\\n".join(output)
 `;
@@ -573,16 +544,28 @@ output.append(f"UTIL = {UTIL} ≈ {float(UTIL):.6f}")
             output.textContent = 'Выполняется расчёт...';
 
             try {
-                const N = document.getElementById('N2').value;
-                const K = document.getElementById('K2').value;
-                const V = document.getElementById('V2').value;
-                const xi1 = document.getElementById('xi1_2').value;
-                const xi2 = document.getElementById('xi2_2').value;
-                const b1 = document.getElementById('b1_2').value;
-                const b2 = document.getElementById('b2_2').value;
-                const mu1 = document.getElementById('mu1_2').value;
-                const mu2 = document.getElementById('mu2_2').value;
+                const N = parseInt(document.getElementById('N2').value);
+                const K = parseInt(document.getElementById('K2').value);
+                const V = parseInt(document.getElementById('V2').value);
                 const v_list_str = document.getElementById('v_list_2').value;
+
+                // Собираем xi[]
+                let xi_values = [];
+                for (let k = 1; k <= K; k++) {
+                    xi_values.push(document.getElementById(`xi${k}_2`).value);
+                }
+
+                // Собираем b[]
+                let b_values = [];
+                for (let k = 1; k <= K; k++) {
+                    b_values.push(document.getElementById(`b${k}_2`).value);
+                }
+
+                // Собираем mu[]
+                let mu_values = [];
+                for (let k = 1; k <= K; k++) {
+                    mu_values.push(document.getElementById(`mu${k}_2`).value);
+                }
 
                 const pythonCode = `
 from fractions import Fraction
@@ -590,9 +573,9 @@ from fractions import Fraction
 N = ${N}
 K = ${K}
 V = ${V}
-xi = [${xi1}, ${xi2}]
-b = [${b1}, ${b2}]
-mu = [${mu1}, ${mu2}]
+xi = [${xi_values.join(', ')}]
+b = [${b_values.join(', ')}]
+mu = [${mu_values.join(', ')}]
 v_list = [${v_list_str}]
 
 S = [Fraction(xi[k]) / Fraction(mu[k]) for k in range(K)]
@@ -602,95 +585,24 @@ output = []
 output.append("="*60)
 output.append("ПАРАМЕТРЫ ЗАДАЧИ")
 output.append("="*60)
-output.append(f"N = {N} (макс. число соединений)")
-output.append(f"K = {K} (число классов)")
-output.append(f"V = {V} (общий ресурс)")
+output.append(f"N = {N}, K = {K}, V = {V}")
 output.append(f"ξ = {xi}")
 output.append(f"b = {b}")
 output.append(f"μ = {mu}")
 output.append(f"\\nНагрузка классов:")
 for k in range(K):
-    output.append(f"S_{k+1} = ξ_{k+1}/μ_{k+1} = {xi[k]}/{mu[k]} = {S[k]} = {float(S[k])}")
+    output.append(f"S_{k+1} = {S[k]} = {float(S[k])}")
 
 output.append("\\n" + "="*60)
-output.append("ЗАДАНИЕ 1: Схема модели")
-output.append("="*60)
-output.append(f"Два потока заявок:")
-for k in range(K):
-    output.append(f"  Класс {k+1}: ξ_{k+1}={xi[k]}, b_{k+1}={b[k]}, μ_{k+1}={mu[k]}")
-output.append(f"Ограничения:")
-output.append(f"  По числу: n₁ + n₂ ≤ {N}")
-output.append(f"  По ресурсу: n₁·{b[0]} + n₂·{b[1]} ≤ {V}")
-
-output.append("\\n" + "="*60)
-output.append("ЗАДАНИЕ 2: Найти U(n) для состояний")
-output.append("="*60)
-
-states = [(1, 4), (2, 4), (2, 3), (5, 1), (6, 1)]
-
-output.append("\\nФормула: U(n₁, n₂) = n₁·b₁ + n₂·b₂\\n")
-
-for state in states:
-    n1, n2 = state
-    U = n1 * b[0] + n2 * b[1]
-    output.append(f"U({n1}, {n2}) = {n1}·{b[0]} + {n2}·{b[1]} = {U}")
-
-output.append("\\n" + "="*60)
-output.append("ЗАДАНИЕ 3: Принадлежность к S^(1), S_k^(1), S̄_k^(1)")
-output.append("="*60)
-
-output.append(f"\\nОпределения:")
-output.append(f"S^(1) = {{(n₁, n₂): n₁ + n₂ ≤ {N}, n₁·{b[0]} + n₂·{b[1]} ≤ {V}}}")
-output.append(f"S_k^(1) = {{(n₁, n₂) ∈ S^(1): n₁·{b[0]} + n₂·{b[1]} ≤ {V} - b_k}}")
-output.append(f"S̄_k^(1) = S^(1) \\\\ S_k^(1)\\n")
-
-for state in states:
-    n1, n2 = state
-    sum_n = n1 + n2
-    U = n1 * b[0] + n2 * b[1]
-
-    output.append(f"Состояние ({n1}, {n2}):")
-    output.append(f"  Проверка S^(1):")
-    output.append(f"    n₁ + n₂ = {n1} + {n2} = {sum_n} ≤ {N}? {sum_n <= N}")
-    output.append(f"    U = n₁·b₁ + n₂·b₂ = {n1}·{b[0]} + {n2}·{b[1]} = {U} ≤ {V}? {U <= V}")
-
-    in_S = (sum_n <= N) and (U <= V)
-
-    if in_S:
-        output.append(f"    ✓ ({n1}, {n2}) ∈ S^(1)\\n")
-
-        for k in range(K):
-            output.append(f"  Проверка S_{k+1}^(1):")
-            output.append(f"    Условие: {U} ≤ {V} - {b[k]} = {V - b[k]}")
-
-            condition = U <= V - b[k]
-
-            if condition:
-                output.append(f"    {U} ≤ {V - b[k]}? ✓")
-                output.append(f"    ⇒ ({n1}, {n2}) ∈ S_{k+1}^(1)")
-                output.append(f"    ⇒ ({n1}, {n2}) ∉ S̄_{k+1}^(1)\\n")
-            else:
-                output.append(f"    {U} ≤ {V - b[k]}? ✗")
-                output.append(f"    ⇒ ({n1}, {n2}) ∉ S_{k+1}^(1)")
-                output.append(f"    ⇒ ({n1}, {n2}) ∈ S̄_{k+1}^(1)\\n")
-    else:
-        output.append(f"    ✗ ({n1}, {n2}) ∉ S^(1)")
-        output.append(f"    (не проверяем S_k^(1), так как не в S^(1))\\n")
-
-output.append("="*60)
-output.append(f"ЗАДАНИЕ 4: Вычисление q'(v) для v = {v_list}")
+output.append("ЗАДАНИЕ 4: Вычисление q'(v)")
 output.append("="*60)
 
 output.append("\\nФормула Энгсета-I:")
 output.append("q'(v) = (1/v) · Σ(k=1 до K) (N + 1 - v/b_k)·S_k·b_k·q'(v - b_k)")
-output.append("где суммируются только члены с:")
-output.append("  - положительным коэффициентом (N + 1 - v/b_k) > 0")
-output.append("  - v - b_k ≥ 0")
 output.append("")
 
-q_prime = {}
-q_prime[0] = Fraction(1)
-output.append(f"Начальное условие: q'(0) = 1\\n")
+q_prime = {0: Fraction(1)}
+output.append(f"q'(0) = 1\\n")
 
 for v in v_list:
     output.append("-"*60)
@@ -698,8 +610,6 @@ for v in v_list:
     output.append("-"*60)
 
     summ = Fraction(0)
-    terms = []
-    terms_with_values = []
 
     for k in range(K):
         output.append(f"\\nk={k+1} (b_{k+1}={b[k]}):")
@@ -709,39 +619,21 @@ for v in v_list:
 
             coeff = N + 1 - Fraction(v) / Fraction(b[k])
 
-            output.append(f"  Коэффициент = N + 1 - v/b_{k+1}")
-            output.append(f"              = {N} + 1 - {v}/{b[k]}")
-            output.append(f"              = {N + 1} - {Fraction(v)/Fraction(b[k])}")
-            output.append(f"              = {coeff} = {float(coeff)}")
+            output.append(f"  Коэффициент = {N} + 1 - {v}/{b[k]} = {coeff} = {float(coeff)}")
 
-            if coeff > 0 and (v - b[k]) >= 0:
+            if coeff > 0:
                 term = coeff * S[k] * b[k] * q_prime.get(v - b[k], Fraction(0))
                 summ += term
 
-                terms.append(f"({coeff})·{S[k]}·{b[k]}·q'({v - b[k]})")
-                terms_with_values.append(str(term))
-
                 output.append(f"  Коэффициент > 0 ✓ → учитываем")
-                output.append(f"  Слагаемое = {coeff}·{S[k]}·{b[k]}·q'({v - b[k]})")
-                output.append(f"            = {coeff}·{S[k]}·{b[k]}·{q_prime.get(v - b[k], Fraction(0))}")
-                output.append(f"            = {float(coeff)}·{float(S[k])}·{b[k]}·{float(q_prime.get(v - b[k], Fraction(0)))}")
-                output.append(f"            = {term} = {float(term)}")
+                output.append(f"  Слагаемое = {term} = {float(term)}")
             else:
                 output.append(f"  Коэффициент ≤ 0 ✗ → пропускаем")
         else:
-            output.append(f"  v - b_{k+1} = {v} - {b[k]} = {v - b[k]} < 0 ✗ → пропускаем")
+            output.append(f"  v - b_{k+1} = {v} - {b[k]} < 0 ✗ → пропускаем")
 
     q_prime[v] = summ / v
-
-    output.append(f"\\nq'({v}) = (Σ слагаемых) / {v}")
-    if terms:
-        output.append(f"      = ({' + '.join(terms)}) / {v}")
-    if terms_with_values:
-        output.append(f"      = ({' + '.join(terms_with_values)}) / {v}")
-    output.append(f"      = {summ} / {v}")
-    output.append(f"      = {q_prime[v]}")
-    output.append(f"      = {float(q_prime[v])}")
-    output.append("")
+    output.append(f"\\nq'({v}) = {summ} / {v} = {q_prime[v]} = {float(q_prime[v])}\\n")
 
 output.append("="*60)
 output.append("ИТОГОВЫЕ РЕЗУЛЬТАТЫ")
@@ -763,7 +655,12 @@ for v in v_list:
             btn.textContent = 'Рассчитать';
         }
 
-        window.addEventListener('load', initPyodide);
+        // Инициализация при загрузке
+        window.addEventListener('load', () => {
+            initPyodide();
+            generateInputs1();
+            generateInputs2();
+        });
     </script>
 </body>
 
